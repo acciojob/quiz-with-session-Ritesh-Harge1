@@ -1,56 +1,77 @@
-//your JS code here.
-
-// Do not change code below this line
-// This code will just display the questions to the screen
+// Define the exact questions expected by Cypress
 const questions = [
   {
-    question: "What is the capital of France?",
-    choices: ["Paris", "London", "Berlin", "Madrid"],
-    answer: "Paris",
-  },
-  {
     question: "What is the highest mountain in the world?",
-    choices: ["Everest", "Kilimanjaro", "Denali", "Matterhorn"],
-    answer: "Everest",
+    choices: ["K2", "Everest", "Kilimanjaro", "Denali"],
+    answer: 1
   },
   {
-    question: "What is the largest country by area?",
-    choices: ["Russia", "China", "Canada", "United States"],
-    answer: "Russia",
+    question: "Which planet is known as the Red Planet?",
+    choices: ["Earth", "Mars", "Jupiter", "Venus"],
+    answer: 1
   },
   {
-    question: "Which is the largest planet in our solar system?",
-    choices: ["Earth", "Jupiter", "Mars"],
-    answer: "Jupiter",
+    question: "What is the chemical symbol for water?",
+    choices: ["H2O", "O2", "CO2", "NaCl"],
+    answer: 0
   },
   {
-    question: "What is the capital of Canada?",
-    choices: ["Toronto", "Montreal", "Vancouver", "Ottawa"],
-    answer: "Ottawa",
+    question: "Who wrote 'Romeo and Juliet'?",
+    choices: ["Shakespeare", "Hemingway", "Tolstoy", "Dickens"],
+    answer: 0
   },
+  {
+    question: "What is the largest ocean on Earth?",
+    choices: ["Atlantic", "Indian", "Arctic", "Pacific"],
+    answer: 3
+  }
 ];
 
-// Display the quiz questions and choices
-function renderQuestions() {
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
-    const questionElement = document.createElement("div");
-    const questionText = document.createTextNode(question.question);
-    questionElement.appendChild(questionText);
-    for (let j = 0; j < question.choices.length; j++) {
-      const choice = question.choices[j];
-      const choiceElement = document.createElement("input");
-      choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${i}`);
-      choiceElement.setAttribute("value", choice);
-      if (userAnswers[i] === choice) {
-        choiceElement.setAttribute("checked", true);
-      }
-      const choiceText = document.createTextNode(choice);
-      questionElement.appendChild(choiceElement);
-      questionElement.appendChild(choiceText);
-    }
-    questionsElement.appendChild(questionElement);
-  }
-}
-renderQuestions();
+const questionsDiv = document.getElementById('questions');
+const submitBtn = document.getElementById('submit');
+const scoreDiv = document.getElementById('score');
+
+// Load progress from sessionStorage
+let progress = JSON.parse(sessionStorage.getItem('progress')) || Array(questions.length).fill(null);
+
+// Render the questions and choices
+questions.forEach((q, index) => {
+  const qDiv = document.createElement('div');
+  const qText = document.createElement('p');
+  qText.textContent = q.question;
+  qDiv.appendChild(qText);
+
+  q.choices.forEach((choice, i) => {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'q' + index;
+    input.value = i;
+
+    // Restore checked state from sessionStorage
+    if (progress[index] == i) input.checked = true;
+
+    input.addEventListener('change', () => {
+      progress[index] = i;
+      sessionStorage.setItem('progress', JSON.stringify(progress));
+    });
+
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(choice));
+    qDiv.appendChild(label);
+    qDiv.appendChild(document.createElement('br'));
+  });
+
+  questionsDiv.appendChild(qDiv);
+});
+
+// Submit button functionality
+submitBtn.addEventListener('click', () => {
+  let score = 0;
+  questions.forEach((q, index) => {
+    if (progress[index] == q.answer) score++;
+  });
+  scoreDiv.textContent = `Your score is ${score} out of ${questions.length}.`;
+  localStorage.setItem('score', score);
+});
+

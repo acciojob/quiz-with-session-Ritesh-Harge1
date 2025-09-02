@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz</title>
+  <title>Quiz App</title>
 </head>
 <body>
   <h1>Quiz</h1>
@@ -10,67 +10,7 @@
   <button id="submit">Submit</button>
   <div id="score"></div>
 
-  <script>
-    const questions = [
-      { question: "What is the capital of France?", choices: ["Paris", "London", "Berlin", "Rome"], answer: 0 },
-      { question: "Which planet is known as the Red Planet?", choices: ["Earth", "Mars", "Jupiter", "Venus"], answer: 1 },
-      { question: "Which language runs in a browser?", choices: ["Python", "C", "JavaScript", "Java"], answer: 2 },
-      { question: "What does CSS stand for?", choices: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Computer Style Sheets"], answer: 1 },
-      { question: "Which company developed the iPhone?", choices: ["Google", "Samsung", "Apple", "Microsoft"], answer: 2 }
-    ];
-
-    const questionsContainer = document.getElementById('questions');
-    const submitBtn = document.getElementById('submit');
-    const scoreDiv = document.getElementById('score');
-
-    let progress = JSON.parse(sessionStorage.getItem('progress')) || {};
-
-    function renderQuestions() {
-      questionsContainer.innerHTML = '';
-      questions.forEach((q, index) => {
-        const div = document.createElement('div');
-        div.innerHTML = `<p>${q.question}</p>`; // **No numbering**
-        q.choices.forEach((choice, i) => {
-          const input = document.createElement('input');
-          input.type = 'radio';
-          input.name = `q${index}`;
-          input.value = i;
-          if (progress[index] == i) input.checked = true; // **Use property, not attribute**
-          const label = document.createElement('label');
-          label.appendChild(input);
-          label.appendChild(document.createTextNode(choice));
-          div.appendChild(label);
-          div.appendChild(document.createElement('br'));
-        });
-        questionsContainer.appendChild(div);
-      });
-    }
-
-    renderQuestions();
-
-    questionsContainer.addEventListener('change', (e) => {
-      if (e.target.matches('input[type="radio"]')) {
-        const qIndex = e.target.name.replace('q','');
-        progress[qIndex] = parseInt(e.target.value);
-        sessionStorage.setItem('progress', JSON.stringify(progress));
-      }
-    });
-
-    submitBtn.addEventListener('click', () => {
-      let score = 0;
-      questions.forEach((q, index) => {
-        if (progress[index] === q.answer) score++;
-      });
-      scoreDiv.textContent = `Your score is ${score} out of ${questions.length}.`;
-      localStorage.setItem('score', score);
-    });
-
-    // Restore previous score if exists
-    const savedScore = localStorage.getItem('score');
-    if (savedScore !== null) {
-      scoreDiv.textContent = `Your score is ${savedScore} out of ${questions.length}.`;
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
 
